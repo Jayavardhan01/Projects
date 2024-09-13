@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        /* Simple styling for the modal */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<div id="cart">
+    <!-- Display the items in the shopping cart -->
+    <ul id="cart-items"></ul>
+    <!-- Display the total price -->
+    <p>Total: $<span id="total-price">0.00</span></p>
+</div>
+
+<!-- Button to open the checkout modal -->
+<button onclick="openCheckoutModal()">Complete Purchase</button>
+
+<!-- Modal for user details -->
+<div id="modal">
+    <form id="user-details-form" onsubmit="processCheckout(event)">
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        <br>
+        <button type="submit">Place Order</button>
+    </form>
+</div>
+
+<script src="app.js"></script>
+<script>
+    // Function to display cart items dynamically from app.js
+    function displayCartDynamically() {
+        const cartList = document.getElementById('cart-items');
+        const totalPriceElement = document.getElementById('total-price');
+
+        // Clear previous items
+        cartList.innerHTML = '';
+
+        // Access cart values from app.js
+        const cartItems = getAppCartValues();
+
+        let totalPrice = 0;
+
+        // Display each item in the dynamically fetched cart
+        cartItems.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${item.name} x ${item.quantity} - Rs${(item.price * item.quantity).toFixed(2)}`;
+            cartList.appendChild(listItem);
+
+            totalPrice += item.price * item.quantity;
+        });
+
+        // Update the total price
+        totalPriceElement.textContent = totalPrice.toFixed(2);
+    }
+
+    // Function to open the checkout modal
+    function openCheckoutModal() {
+        // Display cart dynamically before opening the modal
+        displayCartDynamically();
+
+        const modal = document.getElementById('modal');
+        modal.style.display = 'block';
+    }
+
+    // Function to close the checkout modal
+    function closeCheckoutModal() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+
+    // Function to process the checkout
+    function processCheckout(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+
+        // Validate user inputs (you may want to add more validation)
+        if (!name || !email) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        // Assuming you would send this data to a server for further processing
+        const checkoutData = {
+            name: name,
+            email: email,
+            cart: getAppCartValues()  // Fetch cart dynamically
+        };
+
+        // In a real scenario, you might use AJAX to send the data to the server
+        // For simplicity, we'll just log the data to the console here
+        console.log('Checkout Data:', checkoutData);
+
+        // Close the modal after processing
+        closeCheckoutModal();
+
+        // You can then redirect the user to a thank-you page or perform other actions
+        alert('Order placed successfully!');
+    }
+
+    // Initial display of cart items dynamically
+    displayCartDynamically();
+</script>
+
+</body>
+</html>
